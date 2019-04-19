@@ -1,43 +1,42 @@
-const getString = function(ptr, len) {
+const getString = function (ptr, len) {
     const slice = zigdom.exports.memory.buffer.slice(ptr, ptr + len);
     const textDecoder = new TextDecoder();
     return textDecoder.decode(slice);
 }
 
-const pushObject = function(object) {
+const pushObject = function (object) {
     return zigdom.objects.push(object);
 }
 
-const getObject = function(objId) {
+const getObject = function (objId) {
     return zigdom.objects[objId - 1];
 }
 
-const dispatch = function(eventId) {
-    return function() {
+const dispatch = function (eventId) {
+    return function () {
         zigdom.exports.dispatchEvent(eventId);
     };
 }
 
-const elementSetAttribute = function(node_id, name_ptr, name_len, value_ptr, value_len) {
+const elementSetAttribute = function (node_id, name_ptr, name_len, value_ptr, value_len) {
     const node = getObject(node_id);
     const name = getString(name_ptr, name_len);
     const value = getString(value_ptr, value_len);
     node.setAttribute(name, value);
 }
 
-const elementGetAttribute = function(node_id, name_ptr, name_len, result_address_ptr, result_address_len_ptr) {
+const elementGetAttribute = function (node_id, name_ptr, name_len, result_address_ptr, result_address_len_ptr) {
     const node = getObject(node_id);
     const attribute_name = getString(name_ptr, name_len);
     const result = node[attribute_name];
     // convert result into Uint8Array
     const textEncoder = new TextEncoder();
     const resultArray = textEncoder.encode(result);
-    var len = resultArray.length; 
+    var len = resultArray.length;
 
     if (len === 0) {
         return false;
     }
-
 
     // allocate required number of bytes 
     const ptr = zigdom.exports._wasm_alloc(len);
@@ -62,28 +61,28 @@ const elementGetAttribute = function(node_id, name_ptr, name_len, result_address
     // return if success? (optional)
     return true;
 }
-const eventTargetAddEventListener = function(objId, event_ptr, event_len, eventId) {
+const eventTargetAddEventListener = function (objId, event_ptr, event_len, eventId) {
     const node = getObject(objId);
     const ev = getString(event_ptr, event_len);
     node.addEventListener(ev, dispatch(eventId));
 }
 
-const documentQuerySelector = function(selector_ptr, selector_len) {
+const documentQuerySelector = function (selector_ptr, selector_len) {
     const selector = getString(selector_ptr, selector_len);
     return pushObject(document.querySelector(selector));
 }
 
-const documentCreateElement = function(tag_name_ptr, tag_name_len) {
+const documentCreateElement = function (tag_name_ptr, tag_name_len) {
     const tag_name = getString(tag_name_ptr, tag_name_len);
     return pushObject(document.createElement(tag_name));
 }
 
-const documentCreateTextNode = function(data_ptr, data_len) {
+const documentCreateTextNode = function (data_ptr, data_len) {
     data = getString(data_ptr, data_len);
     return pushObject(document.createTextNode(data));
 }
 
-const nodeAppendChild = function(node_id, child_id) {
+const nodeAppendChild = function (node_id, child_id) {
     const node = getObject(node_id);
     const child = getObject(child_id);
 
@@ -94,17 +93,17 @@ const nodeAppendChild = function(node_id, child_id) {
     return pushObject(node.appendChild(child));
 }
 
-const windowAlert = function(msg_ptr, msg_len) {
+const windowAlert = function (msg_ptr, msg_len) {
     const msg = getString(msg_ptr, msg_len);
     alert(msg);
 }
 
-const zigReleaseObject = function(object_id) {
+const zigReleaseObject = function (object_id) {
     zigdom.objects[object_id - 1] = undefined;
 }
 
-const launch = function(result) {
-    zigdom.exports = result.instance.exports;   
+const launch = function (result) {
+    zigdom.exports = result.instance.exports;
     if (!zigdom.exports.launch_export()) {
         throw "Launch Error";
     }

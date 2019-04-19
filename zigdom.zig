@@ -2,7 +2,13 @@
 extern "document" fn query_selector(selector_ptr: [*]const u8, selector_len: usize) usize;
 extern "document" fn create_element(tag_name_ptr: [*]const u8, tag_name_len: usize) usize;
 extern "document" fn create_text_node(data_ptr: [*]const u8, data_len: usize) usize;
-extern "element" fn set_attribute(element_id: usize, name_ptr: [*]const u8, name_len: usize, value_ptr: [*]const u8, value_len: usize,) void;
+extern "element" fn set_attribute(
+    element_id: usize,
+    name_ptr: [*]const u8,
+    name_len: usize,
+    value_ptr: [*]const u8,
+    value_len: usize,
+) void;
 extern "element" fn get_attribute(element_id: usize, name_ptr: [*]const u8, name_len: usize, value_ptr: *[*]u8, value_len: *usize) bool;
 extern "event_target" fn add_event_listener(event_target_id: usize, event_ptr: [*]const u8, event_len: usize, event_id: usize) void;
 extern "window" fn alert(msg_ptr: [*]const u8, msg_len: usize) void;
@@ -13,7 +19,7 @@ const std = @import("std");
 
 const eventId = enum(usize) {
     Submit,
-    Clear
+    Clear,
 };
 
 var input_tag_node: u32 = undefined;
@@ -35,7 +41,7 @@ fn launch() !void {
     }
 
     const input_tag_attribute_name = "value";
-    const input_tag_attribute_value= "Hello from Zig!";
+    const input_tag_attribute_value = "Hello from Zig!";
     set_attribute(input_tag_node, &input_tag_attribute_name, input_tag_attribute_name.len, &input_tag_attribute_value, input_tag_attribute_value.len);
 
     const button_tag_name = "button";
@@ -49,7 +55,7 @@ fn launch() !void {
 
     const event_name = "click";
     attach_listener(submit_button_node, event_name, eventId.Submit);
-    
+
     const submit_text_msg = "submit";
     const submit_text_node = create_text_node(&submit_text_msg, submit_text_msg.len);
     defer release_object(submit_text_node);
@@ -109,16 +115,14 @@ fn launch() !void {
     if (attached_clear_button_node == 0) {
         return error.AppendChildError;
     }
-    
 }
 
 fn attach_listener(node: usize, event_name: []const u8, event_id: eventId) void {
     add_event_listener(node, event_name.ptr, event_name.len, @enumToInt(event_id));
-
 }
 
 export fn dispatchEvent(id: u32) void {
-    switch(@intToEnum(eventId, id)) {
+    switch (@intToEnum(eventId, id)) {
         eventId.Submit => on_submit_event(),
         eventId.Clear => on_clear_event(),
     }
@@ -126,7 +130,7 @@ export fn dispatchEvent(id: u32) void {
 
 fn on_clear_event() void {
     const input_tag_attribute_name = "value";
-    const input_tag_attribute_value= "";
+    const input_tag_attribute_value = "";
     set_attribute(input_tag_node, &input_tag_attribute_name, input_tag_attribute_name.len, &input_tag_attribute_value, input_tag_attribute_value.len);
 }
 fn on_submit_event() void {
