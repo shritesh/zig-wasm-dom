@@ -2,13 +2,7 @@
 extern "document" fn query_selector(selector_ptr: [*]const u8, selector_len: usize) usize;
 extern "document" fn create_element(tag_name_ptr: [*]const u8, tag_name_len: usize) usize;
 extern "document" fn create_text_node(data_ptr: [*]const u8, data_len: usize) usize;
-extern "element" fn set_attribute(
-    element_id: usize,
-    name_ptr: [*]const u8,
-    name_len: usize,
-    value_ptr: [*]const u8,
-    value_len: usize,
-) void;
+extern "element" fn set_attribute(element_id: usize, name_ptr: [*]const u8, name_len: usize, value_ptr: [*]const u8, value_len: usize) void;
 extern "element" fn get_attribute(element_id: usize, name_ptr: [*]const u8, name_len: usize, value_ptr: *[*]u8, value_len: *usize) bool;
 extern "event_target" fn add_event_listener(event_target_id: usize, event_ptr: [*]const u8, event_len: usize, event_id: usize) void;
 extern "window" fn alert(msg_ptr: [*]const u8, msg_len: usize) void;
@@ -133,6 +127,7 @@ fn on_clear_event() void {
     const input_tag_attribute_value = "";
     set_attribute(input_tag_node, &input_tag_attribute_name, input_tag_attribute_name.len, &input_tag_attribute_value, input_tag_attribute_value.len);
 }
+
 fn on_submit_event() void {
     var attribute_ptr: [*]u8 = undefined;
     var attribute_len: usize = undefined;
