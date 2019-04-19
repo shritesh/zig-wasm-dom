@@ -11,26 +11,38 @@ fn launch() !void {
     defer release_object(body_node);
 
     if (body_node == 0) {
-        return error.ElementNotFound;
+        return error.QuerySelectorError;
     }
 
     const pre_tag_name = "pre";
     const pre_tag_node = create_element(&pre_tag_name, pre_tag_name.len);
     defer release_object(pre_tag_node);
+
+    if (pre_tag_node == 0) {
+        return error.CreateElementError;
+    }
     
     const text_msg = @embedFile("zigdom.zig");
     const text_node = create_text_node(&text_msg, text_msg.len);
     defer release_object(text_node);
 
     if (text_node == 0) {
-        return error.ElementNotFound;
+        return error.CreateTextNodeError;
     }
 
     const attached_text_node = append_child(pre_tag_node, text_node);
     defer release_object(attached_text_node);
 
+    if (attached_text_node == 0) {
+        return error.AppendChildError;
+    }
+
     const attached_pre_node = append_child(body_node, pre_tag_node);
     defer release_object(attached_pre_node);
+
+    if (attached_pre_node == 0) {
+        return error.AppendChildError;
+    }
 }
 
 export fn launch_export() bool {
