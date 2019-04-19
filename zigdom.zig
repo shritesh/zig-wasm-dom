@@ -1,3 +1,4 @@
+// https://github.com/shritesh/zig-wasm-dom
 extern "document" fn query_selector(selector_ptr: [*]u8, selector_len: usize) usize;
 extern "document" fn create_element(tag_name_ptr: [*]u8, tag_name_len: usize) usize;
 extern "document" fn create_text_node(data_ptr: [*]u8, data_len: usize) usize;
