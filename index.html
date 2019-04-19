@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Zig DOM</title>
+</head>
+
+<body>
+    <script src="zigdom.js"></script>
+    <script>
+        fetch('zigdom.wasm')
+            .then(response => response.arrayBuffer())
+            .then(bytes => WebAssembly.instantiate(bytes, zigdom.imports))
+            .then(zigdom.launch);
+    </script>
+</body>
+
+</html>
