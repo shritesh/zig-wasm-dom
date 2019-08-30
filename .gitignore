@@ -1,2 +1,4 @@
 *.o
-zig-cache/
+zig-cache/zigdom.h
+zigdom.o
+zigdom.h
