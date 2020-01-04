@@ -137,7 +137,7 @@ fn on_submit_event() void {
 
     if (success) {
         const result = attribute_ptr[0..attribute_len];
-        defer std.heap.wasm_allocator.free(result);
+        defer std.heap.page_allocator.free(result);
 
         alert(result.ptr, result.len);
     }
@@ -149,6 +149,6 @@ export fn launch_export() bool {
 }
 
 export fn _wasm_alloc(len: usize) u32 {
-    var buf = std.heap.wasm_allocator.alloc(u8, len) catch |err| return 0;
+    var buf = std.heap.page_allocator.alloc(u8, len) catch |err| return 0;
     return @ptrToInt(buf.ptr);
 }
