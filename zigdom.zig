@@ -20,14 +20,14 @@ var input_tag_node: u32 = undefined;
 
 fn launch() !void {
     const body_selector = "body";
-    const body_node = query_selector(&body_selector, body_selector.len);
+    const body_node = query_selector(body_selector, body_selector.len);
     defer release_object(body_node);
 
     if (body_node == 0) {
         return error.QuerySelectorError;
     }
     const input_tag_name = "input";
-    input_tag_node = create_element(&input_tag_name, input_tag_name.len);
+    input_tag_node = create_element(input_tag_name, input_tag_name.len);
     // We don't release as we'll be referencing it later
 
     if (input_tag_node == 0) {
@@ -36,11 +36,11 @@ fn launch() !void {
 
     const input_tag_attribute_name = "value";
     const input_tag_attribute_value = "Hello from Zig!";
-    set_attribute(input_tag_node, &input_tag_attribute_name, input_tag_attribute_name.len, &input_tag_attribute_value, input_tag_attribute_value.len);
+    set_attribute(input_tag_node, input_tag_attribute_name, input_tag_attribute_name.len, input_tag_attribute_value, input_tag_attribute_value.len);
 
     const button_tag_name = "button";
 
-    const submit_button_node = create_element(&button_tag_name, button_tag_name.len);
+    const submit_button_node = create_element(button_tag_name, button_tag_name.len);
     defer release_object(submit_button_node);
 
     if (submit_button_node == 0) {
@@ -51,7 +51,7 @@ fn launch() !void {
     attach_listener(submit_button_node, event_name, eventId.Submit);
 
     const submit_text_msg = "submit";
-    const submit_text_node = create_text_node(&submit_text_msg, submit_text_msg.len);
+    const submit_text_node = create_text_node(submit_text_msg, submit_text_msg.len);
     defer release_object(submit_text_node);
 
     if (submit_text_node == 0) {
@@ -65,7 +65,7 @@ fn launch() !void {
         return error.AppendChildError;
     }
 
-    const clear_button_node = create_element(&button_tag_name, button_tag_name.len);
+    const clear_button_node = create_element(button_tag_name, button_tag_name.len);
     defer release_object(clear_button_node);
 
     if (clear_button_node == 0) {
@@ -75,7 +75,7 @@ fn launch() !void {
     attach_listener(clear_button_node, event_name, eventId.Clear);
 
     const clear_text_msg = "clear";
-    const clear_text_node = create_text_node(&clear_text_msg, clear_text_msg.len);
+    const clear_text_node = create_text_node(clear_text_msg, clear_text_msg.len);
     defer release_object(clear_text_node);
 
     if (clear_text_node == 0) {
@@ -125,7 +125,7 @@ export fn dispatchEvent(id: u32) void {
 fn on_clear_event() void {
     const input_tag_attribute_name = "value";
     const input_tag_attribute_value = "";
-    set_attribute(input_tag_node, &input_tag_attribute_name, input_tag_attribute_name.len, &input_tag_attribute_value, input_tag_attribute_value.len);
+    set_attribute(input_tag_node, input_tag_attribute_name, input_tag_attribute_name.len, input_tag_attribute_value, input_tag_attribute_value.len);
 }
 
 fn on_submit_event() void {
@@ -133,11 +133,11 @@ fn on_submit_event() void {
     var attribute_len: usize = undefined;
 
     const input_tag_attribute_name = "value";
-    const success = get_attribute(input_tag_node, &input_tag_attribute_name, input_tag_attribute_name.len, &attribute_ptr, &attribute_len);
+    const success = get_attribute(input_tag_node, input_tag_attribute_name, input_tag_attribute_name.len, &attribute_ptr, &attribute_len);
 
     if (success) {
         const result = attribute_ptr[0..attribute_len];
-        defer std.heap.wasm_allocator.free(result);
+        defer std.heap.page_allocator.free(result);
 
         alert(result.ptr, result.len);
     }
@@ -149,6 +149,6 @@ export fn launch_export() bool {
 }
 
 export fn _wasm_alloc(len: usize) u32 {
-    var buf = std.heap.wasm_allocator.alloc(u8, len) catch |err| return 0;
+    var buf = std.heap.page_allocator.alloc(u8, len) catch |err| return 0;
     return @ptrToInt(buf.ptr);
 }
