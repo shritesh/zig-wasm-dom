@@ -144,11 +144,11 @@ fn on_submit_event() void {
 }
 
 export fn launch_export() bool {
-    launch() catch |err| return false;
+    launch() catch return false;
     return true;
 }
 
 export fn _wasm_alloc(len: usize) u32 {
-    var buf = std.heap.page_allocator.alloc(u8, len) catch |err| return 0;
+    var buf = std.heap.page_allocator.alloc(u8, len) catch return 0;
     return @ptrToInt(buf.ptr);
 }
