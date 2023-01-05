@@ -2,4 +2,4 @@
 
 An example demonstrating Zig interacting with the DOM via JS.
 
-Compile with `zig build-lib -target wasm32-freestanding --release-small zigdom.zig`
+Compile with `zig build-lib zigdom.zig -target wasm32-freestanding -dynamic -OReleaseSmall`
